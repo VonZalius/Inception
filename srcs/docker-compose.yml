@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  mariadb:
+    build: ./mariadb
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=wp_user
+      - MYSQL_PASSWORD=your_password
+
+  wordpress:
+    build: ./wordpress
+    volumes:
+      - ./wordpress/html:/var/www/html
+    environment:
+      - WORDPRESS_DB_HOST=mariadb:3306
+      - WORDPRESS_DB_USER=wp_user
+      - WORDPRESS_DB_PASSWORD=your_password
+      - WORDPRESS_DB_NAME=wordpress
+    depends_on:
+      - mariadb
+    ports:
+      - "9000:9000"  # Ajoutez cette ligne pour exposer le port 9000
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/certs:/etc/ssl/certs
+      - ./nginx/certs:/etc/ssl/private
+    depends_on:
+      - wordpress
+
+volumes:
+  mariadb_data:
+
