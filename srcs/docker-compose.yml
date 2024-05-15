@@ -12,6 +12,8 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - mariadb_data:/var/lib/mysql
+      - ./requirements/mariadb/conf/my.cnf:/etc/mysql/my.cnf
+      - ./requirements/mariadb/tools/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - wp_network
     restart: always
